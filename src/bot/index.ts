@@ -1,6 +1,7 @@
 import { autoChatAction } from '@grammyjs/auto-chat-action'
 import { hydrate } from '@grammyjs/hydrate'
 import { hydrateReply, parseMode } from '@grammyjs/parse-mode'
+import { conversations } from '@grammyjs/conversations'
 import type { BotConfig, StorageAdapter } from 'grammy'
 import { Bot as TelegramBot } from 'grammy'
 import { sequentialize } from '@grammyjs/runner'
@@ -16,6 +17,7 @@ import { createContextConstructor } from '#root/bot/context.js'
 import { i18n, isMultipleLocales } from '#root/bot/i18n.js'
 import type { Logger } from '#root/logger.js'
 import type { Config } from '#root/config.js'
+import { greetingConversation } from '#root/bot/conversations/index.js'
 
 interface Dependencies {
   config: Config
@@ -56,6 +58,8 @@ export function createBot(token: string, dependencies: Dependencies, options: Op
   protectedBot.use(hydrate())
   protectedBot.use(session({ getSessionKey, storage: options.botSessionStorage }))
   protectedBot.use(i18n)
+  protectedBot.use(conversations())
+  protectedBot.use(greetingConversation())
 
   // Handlers
   protectedBot.use(welcomeFeature)
