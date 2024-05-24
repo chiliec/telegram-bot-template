@@ -6,6 +6,7 @@ import type { I18nFlavor } from '@grammyjs/i18n'
 import type { ParseModeFlavor } from '@grammyjs/parse-mode'
 import type { Logger } from '#root/logger.js'
 import type { Config } from '#root/config.js'
+import type { PrismaClientX } from '#root/prisma/index.js'
 
 export interface SessionData {
   // field?: string;
@@ -14,6 +15,7 @@ export interface SessionData {
 interface ExtendedContextFlavor {
   logger: Logger
   config: Config
+  prisma: PrismaClientX
 }
 
 export type Context = ParseModeFlavor<
@@ -29,15 +31,18 @@ export type Context = ParseModeFlavor<
 interface Dependencies {
   logger: Logger
   config: Config
+  prisma: PrismaClientX
 }
 
 export function createContextConstructor(
   {
     logger,
     config,
+    prisma,
   }: Dependencies,
 ) {
   return class extends DefaultContext implements ExtendedContextFlavor {
+    prisma: PrismaClientX
     logger: Logger
     config: Config
 
@@ -48,6 +53,7 @@ export function createContextConstructor(
         update_id: this.update.update_id,
       })
       this.config = config
+      this.prisma = prisma
     }
   } as unknown as new (update: Update, api: Api, me: UserFromGetMe) => Context
 }

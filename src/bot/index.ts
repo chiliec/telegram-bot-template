@@ -16,10 +16,12 @@ import { createContextConstructor } from '#root/bot/context.js'
 import { i18n, isMultipleLocales } from '#root/bot/i18n.js'
 import type { Logger } from '#root/logger.js'
 import type { Config } from '#root/config.js'
+import type { PrismaClientX } from '#root/prisma/index.js'
 
 interface Dependencies {
   config: Config
   logger: Logger
+  prisma: PrismaClientX
 }
 
 interface Options {
@@ -35,6 +37,7 @@ export function createBot(token: string, dependencies: Dependencies, options: Op
   const {
     config,
     logger,
+    prisma,
   } = dependencies
 
   const bot = new TelegramBot(token, {
@@ -42,6 +45,7 @@ export function createBot(token: string, dependencies: Dependencies, options: Op
     ContextConstructor: createContextConstructor({
       logger,
       config,
+      prisma,
     }),
   })
   const protectedBot = bot.errorBoundary(errorHandler)
